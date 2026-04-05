@@ -7,17 +7,22 @@ import (
 	"os"
 )
 
-func userInput() {
+func userInput() (string, error) {
 	inputReader := bufio.NewReader(os.Stdin)
+	userInput, err := inputReader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+	return userInput, nil
+}
+func main() {
+
 	for {
-		userInput, err := inputReader.ReadString('\n')
+		command, err := userInput()
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(userInput)
-	}
 
-}
-func main() {
-	userInput()
+		fmt.Println(command)
+	}
 }
