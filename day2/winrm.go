@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+// comment
 func winrm_connect(server, user, password, command string) {
 	endpoint := winrm.NewEndpoint(server, 5986, false, false, nil, nil, nil, 0)
 	client, err := winrm.NewClient(endpoint, user, password)
