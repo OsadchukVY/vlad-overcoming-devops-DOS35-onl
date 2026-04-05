@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func main() {
+func userInput() {
 	inputReader := bufio.NewReader(os.Stdin)
 	for {
 		userInput, err := inputReader.ReadString('\n')
@@ -17,4 +17,7 @@ func main() {
 		fmt.Println(userInput)
 	}
 
+}
+func main() {
+	userInput()
 }
