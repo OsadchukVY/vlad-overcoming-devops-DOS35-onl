@@ -1,13 +1,18 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"os"
 )
 
 func main() {
-	_, err := fmt.Println("Hello, world")
+	inputReader := bufio.NewReader(os.Stdin)
+	userInput, err := inputReader.ReadString('\n')
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println(userInput)
 }
