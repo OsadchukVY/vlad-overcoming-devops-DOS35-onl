@@ -1,0 +1,8 @@
+[Unit]
+Description=NFS share
+Requires=network-online.target
+[Automount]
+Where=/media/nfs
+TimeoutIdleSec=301
+[Install]
+WantedBy=graphical.target

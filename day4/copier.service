@@ -1,0 +1,19 @@
+[Unit]
+Description = "Backup service"
+After = local-fs.target rsyslog.service 
+Requires = rsyslog.service 
+
+[Service]
+Type = oneshot
+ExecStart = /opt/blazingly_fast
+User = root
+Group = root
+
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+
+
+MemoryLock=true
+[Install]
+WantedBy=multi-user.target

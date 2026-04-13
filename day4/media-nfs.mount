@@ -1,0 +1,12 @@
+[Unit]
+Description=NFS share
+Wants=network-online.target
+After=network-online.target
+
+[Mount]
+What=192.168.100.28:/mnt/share
+Where=/media/nfs
+Type=nfs
+Options=_netdev,auto
+[Install]
+WantedBy=multi-user.target
