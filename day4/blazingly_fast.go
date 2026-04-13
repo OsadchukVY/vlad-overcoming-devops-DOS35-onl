@@ -50,16 +50,18 @@ func CreateSHA256Hash(src, dst string) ([]byte, []byte) {
 		log.Fatal("FAILED TO READ FILE:", err)
 	}
 
-	dstBytes, err := io.ReadAll(dstFile)
-
-	if err != nil {
-		log.Fatal("FAILED TO READ FILE:", err)
-	}
-
 	srcHasher := sha256.New()
 	_, err = srcHasher.Write(srcBytes)
 	if err != nil {
 		log.Fatal("FAILED TO CREATE SRCHASH:", err)
+	}
+
+	clear(srcBytes)
+
+	dstBytes, err := io.ReadAll(dstFile)
+
+	if err != nil {
+		log.Fatal("FAILED TO READ FILE:", err)
 	}
 
 	dstHasher := sha256.New()
@@ -67,6 +69,8 @@ func CreateSHA256Hash(src, dst string) ([]byte, []byte) {
 	if err != nil {
 		log.Fatal("FAILED TO CREATE DSTHASH:", err)
 	}
+
+	clear(dstBytes)
 
 	return srcHasher.Sum(nil), dstHasher.Sum(nil)
 }
@@ -76,7 +80,8 @@ func compareHash(x, y []byte) bool {
 	if len(x) != len(y) {
 		return false
 	}
-
+	clear(x)
+	clear(y)
 	return subtle.ConstantTimeCompare(x, y) == 1
 }
 
@@ -92,6 +97,9 @@ func CopyFile(src, dst string) {
 	if err != nil {
 		log.Fatal("FAILED TO CREATE FILE:", err)
 	}
+
+	defer srcFile.Close()
+	defer dstFile.Close()
 
 	_, err = io.Copy(dstFile, srcFile)
 	if err != nil {
@@ -109,17 +117,14 @@ func CopyFile(src, dst string) {
 		log.Fatal("FAILED TO STAT FILE:", err)
 		os.Exit(1)
 	}
-
-	srcFile.Close()
-	dstFile.Close()
-
 }
+
 func main() {
 
 	var src string = "/media/nfs/SH3.iso"
 	var dst string = "/srv/SH3.iso"
 
-	if _, err := os.Stat(dst); err != nil {
+	if _, err := os.Stat(dst); err == nil {
 		if compareHash(CreateSHA256Hash(src, dst)) {
 			os.Exit(0)
 		}
