@@ -1,12 +1,12 @@
 package main
 
 import (
-	"crypto/sha256"
-	"crypto/subtle"
 	"io"
 	"log"
 	"log/syslog"
 	"os"
+	"os/exec"
+	"strings"
 )
 
 func WriteSyslog(state string) {
@@ -28,74 +28,48 @@ func WriteSyslog(state string) {
 	}
 }
 
-func CreateSHA256Hash(src, dst string) ([]byte, []byte) {
+func CalculateHashes(src, dst string) (string, string) {
 
-	srcFile, err := os.Open(src)
-	defer srcFile.Close()
-
-	if err != nil {
-		log.Fatal("FAILED TO COPY FILE:", err)
-	}
-
-	dstFile, err := os.Open(dst)
-	defer dstFile.Close()
+	src_out, err := exec.Command("sha256sum", src).Output()
 
 	if err != nil {
-		log.Fatal("FAILED TO COPY FILE:", err)
+		log.Fatal(err)
 	}
 
-	srcBytes, err := io.ReadAll(srcFile)
+	src_hash := strings.Split(string(src_out), " ")
+
+	dst_out, err := exec.Command("sha256sum", dst).Output()
 
 	if err != nil {
-		log.Fatal("FAILED TO READ FILE:", err)
+		log.Fatal(err)
 	}
 
-	srcHasher := sha256.New()
-	_, err = srcHasher.Write(srcBytes)
-	if err != nil {
-		log.Fatal("FAILED TO CREATE SRCHASH:", err)
-	}
-
-	clear(srcBytes)
-
-	dstBytes, err := io.ReadAll(dstFile)
-
-	if err != nil {
-		log.Fatal("FAILED TO READ FILE:", err)
-	}
-
-	dstHasher := sha256.New()
-	_, err = srcHasher.Write(dstBytes)
-	if err != nil {
-		log.Fatal("FAILED TO CREATE DSTHASH:", err)
-	}
-
-	clear(dstBytes)
-
-	return srcHasher.Sum(nil), dstHasher.Sum(nil)
+	out_hash := strings.Split(string(dst_out), " ")
+	return src_hash[0], out_hash[0]
 }
 
-func compareHash(x, y []byte) bool {
-
-	if len(x) != len(y) {
+func CompareHashes(src, dst string) bool {
+	src_hash, out_hash := CalculateHashes(src, dst)
+	if strings.Compare(src_hash, out_hash) != 0 {
 		return false
 	}
-	clear(x)
-	clear(y)
-	return subtle.ConstantTimeCompare(x, y) == 1
+
+	return true
 }
 
-func CopyFile(src, dst string) {
+func CopyFile(src, dst string) bool {
 
 	srcFile, err := os.Open(src)
 
 	if err != nil {
-		log.Fatal("FAILED TO COPY FILE:", err)
+		WriteSyslog("no file in mounted directory")
+		return false
 	}
 
 	dstFile, err := os.Create(dst)
 	if err != nil {
-		log.Fatal("FAILED TO CREATE FILE:", err)
+		WriteSyslog("can't create file in destination directory")
+		return false
 	}
 
 	defer srcFile.Close()
@@ -103,20 +77,24 @@ func CopyFile(src, dst string) {
 
 	_, err = io.Copy(dstFile, srcFile)
 	if err != nil {
-		log.Fatal("FAILED TO COPY FILE:", err)
+		WriteSyslog("can't copy file in destination directory")
+		return false
 	}
 
 	err = dstFile.Sync()
 	if err != nil {
-		log.Fatal("FAILED TO SYNC FILE:", err)
+		WriteSyslog("can't sync file in destination directory")
+		return false
+
 	}
 
 	_, err = os.Stat(dst)
 	if err != nil {
-
-		log.Fatal("FAILED TO STAT FILE:", err)
-		os.Exit(1)
+		WriteSyslog("can't stat file in destination directory")
+		return false
 	}
+
+	return true
 }
 
 func main() {
@@ -125,14 +103,16 @@ func main() {
 	var dst string = "/srv/SH3.iso"
 
 	if _, err := os.Stat(dst); err == nil {
-		if compareHash(CreateSHA256Hash(src, dst)) {
+		if CompareHashes(src, dst) {
 			os.Exit(0)
 		}
 	}
 
-	CopyFile(src, dst)
+	if !CopyFile(src, dst) {
+		os.Exit(0)
+	}
 
-	if compareHash(CreateSHA256Hash(src, dst)) {
+	if CompareHashes(src, dst) {
 		WriteSyslog("success")
 	} else {
 		WriteSyslog("fail")
