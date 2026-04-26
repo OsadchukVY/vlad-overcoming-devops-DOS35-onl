@@ -5,4 +5,4 @@ Requires=network-online.target
 Where=/media/nfs
 TimeoutIdleSec=301
 [Install]
-WantedBy=graphical.target
+WantedBy=multi-user.target

@@ -1,0 +1,38 @@
+#cloud-config
+autoinstall:
+  version: 1
+  updates: all
+  locale: "en_US.UTF-8"
+  user-data:
+    users:
+      - default
+      - name: installer
+        primary_group: installer
+        gecos: Ivan Ivanich
+        passwd: "$6$rounds=4096$JVbnP1avaqmNZ4Pj$z80h.y.rOC6R0bKtuxbRaV5FUN3WCQ3XFC631sS0JnenDh.kvbM.6CUv707vfD3Qoi0UdaUAXXHxBOsIqLkvS."
+        groups: sudo
+        lock_passwd: false
+        shell: /bin/bash
+        sudo: "ALL=(ALL) NOPASSWD:ALL"
+      - name: user
+        primary_group: user 
+        gecos: User 
+        groups: sudo
+        homedir: /home/user
+        lock_passwd: true
+        shell: /bin/bash
+        sudo: "ALL=(ALL) NOPASSWD:ALL"
+        ssh_authorized_keys:
+          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMGSwLXvWcPv9J/PN9nUPvapyK31T7ShAWNFNzSM1/ry user@arch"
+  storage:
+    layout:
+      name: direct
+  
+  ssh:
+    install-server: yes
+    allow-pw: true
+  
+  packages:
+    - git
+    - python3
+    - net-tools

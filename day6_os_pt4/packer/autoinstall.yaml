@@ -1,0 +1,18 @@
+autoinstall:
+  version: 1
+  updates: all
+  package_update: true
+  locale: "en_US.UTF-8"
+  identity:
+    hostname: ubu-pacman
+    username: installer  
+    password: $6$aQ.DH/tCpwAETs8H$xH0THtrnBXHe3J.4rtyJ7g30Pp8CppAWRICFZDm3wsz43DNms4af620KwrmBavcMaOYWEPmll/xnKEVHDs0ZG/
+    groups: sudo
+    shell: /bin/bash
+  ssh:
+    install-server: yes
+    allow-pw: true
+  packages:
+    - git
+    - python
+    - net-tools
