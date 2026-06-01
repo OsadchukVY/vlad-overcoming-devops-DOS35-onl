@@ -1,0 +1,9 @@
+- name: demo the template
+  hosts: localhost
+  gather_facts: true 
+  vars:
+    data_dirs: []
+  tasks:
+    - name: pause with render
+      pause:
+        prompt: "{{ lookup('template', 'etcd.yaml.j2') }}"

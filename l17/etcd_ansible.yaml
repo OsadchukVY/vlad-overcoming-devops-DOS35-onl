@@ -1,0 +1,99 @@
+
+- name: "Install etcd"
+  become: true
+  user: vboxuser
+  become_user: root
+  hosts: etcd 
+  vars:
+    etcd:
+      package: "etcd-v3.6.7-linux-amd64.tar.gz"
+      download_url: "https://github.com/etcd-io/etcd/releases/download/v3.6.7/"
+      archive: "/tmp/etcd.tar.gz"
+  tasks:
+    - name: "Create etcd user"
+      ansible.builtin.user:
+        state: "present"
+        name: "etcd"
+        create_home: true
+        home: "/var/lib/etcd"
+        shell: "/bin/bash"
+        system: true
+
+    - name: "Download etcd"
+      ansible.builtin.get_url:
+        url: "{{ etcd.download_url }}/{{ etcd.package }}"
+        dest: "{{ etcd.archive }}"
+        mode: "0770"
+        
+    - name: "Unarchive etcd"
+      ansible.builtin.unarchive:
+        remote_src: true 
+        src: "{{ etcd.archive }}"
+        dest: "/usr/local/"
+        owner: etcd
+        group: etcd
+        mode: '0770'
+      notify: "Remove archive"
+    
+    - name: "Symlink for etcd binary"
+      ansible.builtin.file:
+        src: "/usr/local/etcd-v3.6.7-linux-amd64/etcd"
+        dest: "/usr/sbin/etcd"
+        owner: "etcd"
+        group: "etcd"
+        state: link
+        mode: "0110"
+
+    - name: "Symlink for etcd binary"
+      ansible.builtin.file:
+        src: "/usr/local/etcd-v3.6.7-linux-amd64/etcdctl"
+        dest: "/usr/sbin/etcdctl"
+        state: link
+        owner: "etcd"
+        group: "etcd"
+        mode: "0110"
+    
+    - name: "Copy etcd service"
+      ansible.builtin.copy:
+        src: "etcd.service"
+        dest: "/etc/systemd/system/"
+        owner: "root"
+        group: "root"
+        mode: "0660"
+    
+    - name: "Add hosts"
+      ansible.builtin.lineinfile:
+        path: "/etc/hosts"
+        line: "{{ item }}"
+      loop:
+        - "192.168.100.37 pg2"
+        - "192.168.100.38 pg1"
+        - "192.168.100.39 haproxy"
+
+    - name: "Make etcd directory"
+      ansible.builtin.file:
+        path: "/etc/etcd/"
+        state: "directory"
+        owner: "etcd"
+        group: "etcd"
+    
+    - name: "Copy etcd config"
+      ansible.builtin.template:
+        src: "etcd.yaml.j2"
+        dest: "/etc/etcd/etcd.yaml"
+    
+    - name: "Reload systemd daemon"
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: "Start/enable etcd service"
+      ansible.builtin.service:
+        name: "etcd"
+        state: "started"
+        enabled: true
+
+  handlers:
+    - name: "Remove archive"
+      ansible.builtin.file:
+        path: "{{ etcd.archive }}"
+        state: "absent"

@@ -1,0 +1,19 @@
+---
+
+- name: "Install patroni"
+  become: true
+  user: vboxuser
+  become_user: root
+  hosts: patroni
+  tasks:
+    - name: "Install postgres"
+      ansible.builtin.apt:
+        name: "postgres-16"
+        state: "present"
+        update_cache: yes
+
+    - name: "Install patroni"
+      ansible.builtin.apt:
+        name: "patroni"
+        state: "present"
+
