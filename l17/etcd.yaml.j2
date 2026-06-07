@@ -2,11 +2,11 @@ name: {{ ansible_facts['hostname'] }}
 advertise-client-urls: http://{{ ansible_facts['default_ipv4']['address'] }}:2379
 data-dir: /var/lib/etcd/postgresql
 initial-advertise-peer-urls: http://{{ ansible_facts['default_ipv4']['address'] }}:2380
-initial-cluster: pg1=http://pg1:2380,pg2=http://pg2:2380,haproxy=http://haproxy:2380
+initial-cluster: pg1=http://192.168.100.44:2380,pg2=http://192.168.100.43:2380,haproxy=http://192.168.100.42:2380
 initial-cluster-state: new
 initial-cluster-token: patroni_cluster
-listen-client-urls: http://{{ ansible_facts['default_ipv4']['address'] }}:2379,http://127.0.0.1:2379
-listen-peer-urls: http://{{ ansible_facts['default_ipv4']['address'] }}:2380
+listen-client-urls: http://0.0.0.0:2379
+listen-peer-urls: http://0.0.0.0:2380
 dial-timeout: 20s
 read-timeout: 20s
 write-timeout: 20s

@@ -10,6 +10,22 @@
       download_url: "https://github.com/etcd-io/etcd/releases/download/v3.6.7/"
       archive: "/tmp/etcd.tar.gz"
   tasks:
+
+    - name: Populate service facts
+      ansible.builtin.service_facts:
+    
+    - name: "Replace status to existing"
+      ansible.builtin.replace:
+        path: "/etc/etcd/etcd.yaml"
+        regexp: "new"
+        replace: "existing"
+      when: ansible_facts['services']['etcd.service']['state'] == 'running'
+      notify: "Restart etcd"
+    
+    - name: "Stop execution"
+      ansible.builtin.meta: end_host
+      when: ansible_facts['services']['etcd.service']['state'] == 'running'
+    
     - name: "Create etcd user"
       ansible.builtin.user:
         state: "present"
@@ -97,3 +113,10 @@
       ansible.builtin.file:
         path: "{{ etcd.archive }}"
         state: "absent"
+
+    - name: "Restart etcd"
+      ansible.builtin.service:
+        name: "etcd.service"
+        state: "restarted"      
+
+

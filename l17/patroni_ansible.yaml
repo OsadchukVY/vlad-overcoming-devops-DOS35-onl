@@ -8,12 +8,9 @@
   tasks:
     - name: "Install postgres"
       ansible.builtin.apt:
-        name: "postgres-16"
+        name: 
+          - "postgres-16"
+          - "patroni"
         state: "present"
         update_cache: yes
-
-    - name: "Install patroni"
-      ansible.builtin.apt:
-        name: "patroni"
-        state: "present"
 
