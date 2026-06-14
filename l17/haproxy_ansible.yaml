@@ -1,0 +1,27 @@
+---
+
+- name: "Install HAproxy"
+  become: true
+  user: vboxuser
+  become_user: root
+  hosts: haproxy
+  tasks:
+    - name: "Install haproxy"
+      ansible.builtin.apt:
+        name: "haproxy"
+        state: present
+        update-cache: true
+
+    - name: "Copy config"
+      ansible.builtin.template:
+        src: "haproxy.cfg.j2"
+        dest: "/etc/haproxy/haproxy.cfg"
+        owner: haproxy
+        group: haproxy
+        mode: u=rw
+    
+    - name: "Copy config"
+      ansible.builtin.service:
+        name: "haproxy"
+        state: "restarted"
+        enabled: true

@@ -6,11 +6,45 @@
   become_user: root
   hosts: patroni
   tasks:
+    - name: "Install common"
+      ansible.builtin.apt:
+        name: "postgresql-common"
+        state: "present"
+        update_cache: true
+
+    - name: "Add postgres keys"
+      ansible.builtin.expect:
+        command: /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+        timeout: 2
+        responses:
+          'Press Enter to continue, or Ctrl-C to abort': '\r'
+
     - name: "Install postgres"
       ansible.builtin.apt:
-        name: 
-          - "postgres-16"
-          - "patroni"
+        name: "postgresql-18"
         state: "present"
-        update_cache: yes
+
+    - name: "Install patroni"
+      ansible.builtin.apt:
+        name: "patroni"
+        state: "present"
+
+    - name: "Stop/disable postgres service"
+      ansible.builtin.service:
+        name: "postgresql"
+        state: "stopped"
+        enabled: false
+
+    - name: "Copy etcd config"
+      ansible.builtin.template:
+        src: "patroni.yaml.j2"
+        dest: "/etc/patroni/config.yml"
+        owner: postgres
+        group: postgres
+
+    - name: "Start/enable patroni service"
+      ansible.builtin.service:
+        name: "patroni"
+        state: "restarted"
+        enabled: true
 

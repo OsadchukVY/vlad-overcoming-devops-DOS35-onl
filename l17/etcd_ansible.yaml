@@ -82,9 +82,9 @@
         path: "/etc/hosts"
         line: "{{ item }}"
       loop:
-        - "192.168.100.37 pg2"
-        - "192.168.100.38 pg1"
-        - "192.168.100.39 haproxy"
+        - "192.168.100.43 pg2"
+        - "192.168.100.44 pg1"
+        - "192.168.100.42 haproxy"
 
     - name: "Make etcd directory"
       ansible.builtin.file:
