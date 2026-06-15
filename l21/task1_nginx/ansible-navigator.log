@@ -1,0 +1,7 @@
+2026-06-15T16:18:01.598814+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' Image inspection failed, image assumed to be corrupted or missing
+2026-06-15T16:18:01.599181+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stdout: []
+
+2026-06-15T16:18:01.599208+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stderr: permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+
+2026-06-15T16:18:01.605051+00:00 ERROR 'ansible_navigator.image_manager.puller._log_message' Execution environment pull failed
+2026-06-15T16:18:01.605112+00:00 ERROR 'ansible_navigator.image_manager.puller._log_message' permission denied while trying to connect to the docker API at unix:///var/run/docker.sock

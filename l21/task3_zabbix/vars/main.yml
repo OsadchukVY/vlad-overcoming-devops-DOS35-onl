@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: MIT-0
+---
+# vars file for task3_zabbix
+agent_url: "https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.4+ubuntu24.04_all.deb"
+download_path: "/tmp/zabbix.deb"

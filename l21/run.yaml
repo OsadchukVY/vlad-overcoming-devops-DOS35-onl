@@ -1,0 +1,8 @@
+---
+
+- hosts: nginx
+  become: true
+  remote_user: vboxuser
+  roles:
+    - task1_nginx
+    - task3_zabbix

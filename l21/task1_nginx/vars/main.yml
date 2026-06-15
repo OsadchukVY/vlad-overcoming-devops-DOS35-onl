@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: MIT-0
+---
+# vars file for task1_nginx
+site_path: "/usr/share/nginx/html"
+listen_port: "8443"

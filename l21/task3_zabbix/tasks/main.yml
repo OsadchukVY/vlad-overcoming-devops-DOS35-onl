@@ -1,0 +1,27 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for task3_zabbix
+- name: "Download zabbix"
+  ansible.builtin.get_url:
+    url: "{{ agent_url }}"
+    dest: "{{ download_path }}"
+    mode: "0770"
+    owner: root
+    group: root
+
+- name: "Install zabbix repo"
+  ansible.builtin.apt:
+    deb: "{{ download_path }}"
+
+- name: "Install zabbix agent"
+  ansible.builtin.apt:
+    name:
+      - zabbix-agent2
+    update_cache: true
+
+- name: "Start zabbix"
+  ansible.builtin.service:
+    name: "zabbix-agent2.service"
+    state: started
+    enabled: true
+

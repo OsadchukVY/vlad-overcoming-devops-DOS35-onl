@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for task1_nginx
+
+- name: "Install nginx"
+  ansible.builtin.apt:
+    name: nginx
+    update_cache: true
+
+- name: "Make pki directory"
+  ansible.builtin.file:
+    path: "/etc/pki/nginx/"
+    owner: root
+    group: root
+    state: directory
+    mode: "0750"
+
+- name: "Copy certs"
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/pki/nginx/"
+    owner: root
+    group: root
+    mode: "0440"
+  loop:
+    - server.crt
+    - server.key
+
+- name: "Copy website"
+  ansible.builtin.copy:
+    src: "example-webpage"
+    dest: "/usr/share/nginx/html"
+    owner: root
+    group: root
+    mode: "0660"
+
+- name: "Copy nginx config"
+  ansible.builtin.template:
+    src: nginx.config.j2
+    dest: "/etc/nginx/nginx.conf"
+    owner: root
+    group: root
+    mode: "0660"
+
+- name: "Start nginx"
+  ansible.builtin.service:
+    name: nginx.service
+    state: restarted
+    enabled: true
+
