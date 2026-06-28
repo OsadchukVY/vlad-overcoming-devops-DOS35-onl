@@ -1,0 +1,12 @@
+UNREACHABLE: 172.16.0.2 packet_sent: 1 packet_recv: 0 packet_loss: 100.000000 
+REACHABLE: 8.8.8.8 packet_sent: 1 packet_recv: 1 packet_loss: 0.000000 
+REACHABLE: 9.9.9.9 packet_sent: 1 packet_recv: 1 packet_loss: 0.000000 
+UNREACHABLE: 172.16.0.1 packet_sent: 1 packet_recv: 0 packet_loss: 100.000000 
+UNREACHABLE: 172.16.0.2 packet_sent: 1 packet_recv: 0 packet_loss: 100.000000 
+REACHABLE: 8.8.8.8 packet_sent: 1 packet_recv: 1 packet_loss: 0.000000 
+REACHABLE: 9.9.9.9 packet_sent: 1 packet_recv: 1 packet_loss: 0.000000 
+UNREACHABLE: 172.16.0.1 packet_sent: 1 packet_recv: 0 packet_loss: 100.000000 
+UNREACHABLE: 172.16.0.2 packet_sent: 3 packet_recv: 0 packet_loss: 100.000000 
+REACHABLE: 8.8.8.8 packet_sent: 3 packet_recv: 3 packet_loss: 0.000000 
+REACHABLE: 9.9.9.9 packet_sent: 3 packet_recv: 3 packet_loss: 0.000000 
+UNREACHABLE: 172.16.0.1 packet_sent: 3 packet_recv: 0 packet_loss: 100.000000 
